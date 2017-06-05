@@ -22,6 +22,8 @@
 package com.gmail.socraticphoenix.forge.bags;
 
 import com.gmail.socraticphoenix.forge.bags.block.BagBlocks;
+import com.gmail.socraticphoenix.forge.bags.item.BagItems;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -32,13 +34,33 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BagClientSideListener {
 
+    @SideOnly(Side.CLIENT)
+    private static void r(Item item, String loc) {
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation("arcanebags:" +loc, "inventory"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void r(Block block, String loc) {
+        r(Item.getItemFromBlock(block), loc);
+    }
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onModelLoad(ModelRegistryEvent ev) {
-        ModelLoader.setCustomModelResourceLocation(BagItems.arcaneBag, 0, new ModelResourceLocation("arcanebags:arcanebag", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(BagItems.infiniteBag, 0, new ModelResourceLocation("arcanebags:infinitebag", "inventory"));
+        r(BagItems.arcaneBag, "arcanebag");
+        r(BagItems.infiniteBag, "infinitebag");
+        r(BagItems.magicalEssence, "magicalessence");
+        r(BagItems.compressedEssence, "compressedessence");
+        r(BagItems.goldPaper, "goldpaper");
+        r(BagItems.arcanePage, "arcanepage");
+        r(BagItems.arcanePaper, "arcanepaper");
+        r(BagItems.infinityMatrix, "infinitymatrix");
+        r(BagItems.awakeningCrystal, "awakeningcrystal");
+        r(BagItems.compressionMatrix, "compressionmatrix");
+        r(BagItems.arcaneMagnet, "arcanemagnet");
+        r(BagItems.soulBinder, "soulbinder");
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BagBlocks.bagInterface), 0, new ModelResourceLocation("arcanebags:baginterface", "inventory"));
+        r(BagBlocks.bagInterface, "baginterface");
     }
 
 }

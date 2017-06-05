@@ -21,19 +21,29 @@
  */
 package com.gmail.socraticphoenix.forge.bags;
 
-import com.gmail.socraticphoenix.forge.bags.block.BagInterfaceTileEntity;
+import com.gmail.socraticphoenix.forge.bags.block.BagBlocks;
+import com.gmail.socraticphoenix.forge.bags.item.BagItems;
 import com.gmail.socraticphoenix.forge.bags.net.BagNetworking;
-import net.minecraft.client.Minecraft;
+import com.gmail.socraticphoenix.forge.bags.proxy.BagProxy;
+import com.gmail.socraticphoenix.forge.bags.recipe.AwakeningRecipe;
+import com.gmail.socraticphoenix.forge.bags.recipe.BagDyeRecipe;
+import com.gmail.socraticphoenix.forge.bags.recipe.CompressionRecipe;
+import com.gmail.socraticphoenix.forge.bags.recipe.UpgradeRecipe;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @Mod(modid = "arcanebags", name = "Arcane Bags")
 public class ModArcaneBags {
@@ -45,12 +55,16 @@ public class ModArcaneBags {
     };
     private static ModArcaneBags instance;
 
+    @SidedProxy(clientSide = "com.gmail.socraticphoenix.forge.bags.proxy.BagClientProxy", serverSide = "com.gmail.socraticphoenix.forge.bags.proxy.BagServerProxy")
+    private static BagProxy proxy;
+
     public ModArcaneBags() {
         instance = this;
         if (FMLCommonHandler.instance().getSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(new BagClientSideListener());
         }
         MinecraftForge.EVENT_BUS.register(new BagRegistryListener());
+        MinecraftForge.EVENT_BUS.register(new BagAbilityListener());
     }
 
     public static ModArcaneBags instance() {
@@ -58,19 +72,44 @@ public class ModArcaneBags {
     }
 
     @Mod.EventHandler
-    public void onInit(FMLInitializationEvent ev) {
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new BagGuiHandler());
-        BagNetworking.initNetwork();
+    public void onPreInit(FMLPreInitializationEvent ev) {
+        proxy.onPreInit(ev);
+
+        RecipeSorter.register("arcanebags:dye_recipe", BagDyeRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        RecipeSorter.register("arcanebags:awakening", AwakeningRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        RecipeSorter.register("arcanebags:upgrade", UpgradeRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        RecipeSorter.register("arcanebags:compress", CompressionRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+
+        CraftingManager manager = CraftingManager.getInstance();
+        manager.addRecipe(new BagDyeRecipe());
+        manager.addRecipe(new AwakeningRecipe());
+        manager.addRecipe(new UpgradeRecipe());
+        manager.addRecipe(new CompressionRecipe());
+
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.magicalEssence), "DOD", "OEO", "DOD", 'D', "gemDiamond", 'O', "obsidian", 'E', Items.ENDER_EYE));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.compressionMatrix), "DPD", "PBP", "DPD", 'D', "gemDiamond", 'P', Blocks.PISTON, 'B', Items.BUCKET));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.goldPaper), "GPG", "GPG", "GPG", 'G', "ingotGold", 'P', "paper"));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcanePaper), "EEE", "EGE", "EEE", 'E', BagItems.compressedEssence, 'G', BagItems.goldPaper));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcanePage), "PLP", "PDP", "PLP", 'P', BagItems.arcanePaper, 'L', "leather", 'D', "gemDiamond"));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.infinityMatrix), "NNN", "NAN", "NNN", 'N', "netherStar", 'A', BagItems.arcanePage));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcaneBag), "WSW", "WAW", "WWW", 'W', Blocks.WOOL, 'S', "string", 'A', BagItems.arcanePage));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.infiniteBag), "EIE", "IBI", "EIE", 'E', BagItems.compressedEssence, 'I', BagItems.infinityMatrix, 'B', BagItems.arcaneBag));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.awakeningCrystal), "DLD", "LEL", "DLD", 'D', "gemDiamond", 'L', "gemLapis", 'E', BagItems.compressedEssence));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagBlocks.bagInterface), "CSC", "SES", "CSC", 'S', "cobblestone", 'C', BagItems.compressionMatrix, 'E', BagItems.compressedEssence));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcaneMagnet), "IRI", "ECE", "IRI", 'I', "ingotIron", 'R', "dustRedstone", 'C', Items.COMPASS, 'E', BagItems.compressedEssence));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.soulBinder), "GDG", "GIG", "GDG", 'G', "ingotGold", 'D', "gemDiamond", 'I', BagItems.infinityMatrix));
     }
 
     @Mod.EventHandler
-    @SideOnly(Side.CLIENT)
-    public void onPreInit(FMLInitializationEvent ev) {
-        GameRegistry.registerTileEntity(BagInterfaceTileEntity.class, "baginterface");
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
-            return tintIndex > 0 ? -1 : stack.hasTagCompound() && stack.getTagCompound().hasKey("color") ? stack.getTagCompound().getInteger("color") : 0x00FFF6;
-        }, BagItems.arcaneBag, BagItems.infiniteBag);
+    public void onInit(FMLInitializationEvent ev) {
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, new BagGuiHandler());
+        BagNetworking.initNetwork();
+        proxy.onInit(ev);
     }
 
+    @Mod.EventHandler
+    public void onPostInit(FMLPostInitializationEvent ev) {
+        proxy.onPostInit(ev);
+    }
 
 }

@@ -22,26 +22,42 @@
 package com.gmail.socraticphoenix.forge.bags;
 
 import com.gmail.socraticphoenix.forge.bags.block.BagBlocks;
+import com.gmail.socraticphoenix.forge.bags.item.BagItems;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 public class BagRegistryListener {
 
     @SubscribeEvent
     public void onBlockRegister(RegistryEvent.Register<Block> ev) {
         BagBlocks.init();
-        ev.getRegistry().register(BagBlocks.bagInterface);
+        r(ev, BagBlocks.bagInterface);
     }
 
     @SubscribeEvent
     public void onItemRegister(RegistryEvent.Register<Item> ev) {
         BagItems.init();
-        ev.getRegistry().register(BagItems.arcaneBag);
-        ev.getRegistry().register(BagItems.infiniteBag);
-        ev.getRegistry().register(new ItemBlock(BagBlocks.bagInterface).setRegistryName("baginterface"));
+        r(ev, BagItems.arcaneBag);
+        r(ev, BagItems.infiniteBag);
+        r(ev, BagItems.magicalEssence);
+        r(ev, BagItems.compressedEssence);
+        r(ev, BagItems.goldPaper);
+        r(ev, BagItems.arcanePaper);
+        r(ev, BagItems.arcanePage);
+        r(ev, BagItems.infinityMatrix);
+        r(ev, BagItems.awakeningCrystal);
+        r(ev, BagItems.compressionMatrix);
+        r(ev, BagItems.arcaneMagnet);
+        r(ev, BagItems.soulBinder);
+        r(ev, new ItemBlock(BagBlocks.bagInterface).setRegistryName("baginterface"));
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> void r(RegistryEvent.Register<T> ev, T val) {
+        ev.getRegistry().register(val);
     }
 
 }

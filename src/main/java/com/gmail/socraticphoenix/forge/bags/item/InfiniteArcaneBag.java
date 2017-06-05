@@ -19,10 +19,12 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags;
+package com.gmail.socraticphoenix.forge.bags.item;
 
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.InfinitePageWrapper;
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.PageWrapper;
+import com.gmail.socraticphoenix.forge.bags.BagGuiHandler;
+import com.gmail.socraticphoenix.forge.bags.ModArcaneBags;
+import com.gmail.socraticphoenix.forge.bags.container.bag.InfinitePageWrapper;
+import com.gmail.socraticphoenix.forge.bags.container.bag.PageWrapper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -43,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class InfiniteArcaneBag  extends Item implements PagedBag {
+public class InfiniteArcaneBag extends Item implements PagedBag {
     private Supplier<ItemStackHandler> handler;
 
     public InfiniteArcaneBag(String name, Supplier<ItemStackHandler> handler) {
@@ -55,8 +57,16 @@ public class InfiniteArcaneBag  extends Item implements PagedBag {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, playerIn, tooltip, advanced);
-        if(this.hasData(stack)) {
+        if (this.hasData(stack)) {
             tooltip.add(TextFormatting.GRAY + I18n.format("arcanebags.pages") + ": \u221E");
+            if (this.isSoulBound(stack)) {
+                tooltip.add(TextFormatting.GRAY + I18n.format("arcanebags.soulbound"));
+            }
+            if (this.isMagnetic(stack)) {
+                tooltip.add(TextFormatting.GRAY + I18n.format("arcanebags.magnetic"));
+            }
+        } else {
+            tooltip.add(TextFormatting.GRAY + I18n.format("arcanebags.unawakened"));
         }
     }
 
@@ -64,10 +74,13 @@ public class InfiniteArcaneBag  extends Item implements PagedBag {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.getItem() == this) {
-            if(!this.hasData(stack)) {
+            if (!this.hasData(stack) && player.capabilities.isCreativeMode) {
                 this.applyData(stack);
             }
-            player.openGui(ModArcaneBags.instance(), BagGuiHandler.BAG, worldIn, 0, 0, 0);
+
+            if (this.hasData(stack)) {
+                player.openGui(ModArcaneBags.instance(), BagGuiHandler.BAG, worldIn, 0, 0, 0);
+            }
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }
@@ -80,6 +93,16 @@ public class InfiniteArcaneBag  extends Item implements PagedBag {
     public void applyData(ItemStack stack) {
         NBTTagCompound sub = stack.getOrCreateSubCompound("arcanebags");
         sub.setTag("pages", new NBTTagList());
+        this.applyMagnetic(stack, true);
+        this.applySoulbound(stack, true);
+    }
+
+    @Override
+    public void applyDefaultData(ItemStack stack) {
+        NBTTagCompound sub = stack.getOrCreateSubCompound("arcanebags");
+        sub.setTag("pages", new NBTTagList());
+        this.applyMagnetic(stack, false);
+        this.applySoulbound(stack, false);
     }
 
     public void applyData(ItemStack stack, Map<Integer, ItemStackHandler> inventory) {
@@ -92,6 +115,20 @@ public class InfiniteArcaneBag  extends Item implements PagedBag {
             list.appendTag(handler);
         }
         sub.setTag("pages", list);
+    }
+
+    public void applyData(ItemStack stack, Map<Integer, ItemStackHandler> inventory, boolean soulbound, boolean magnetic) {
+        NBTTagCompound sub = stack.getOrCreateSubCompound("arcanebags");
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, ItemStackHandler> entry : inventory.entrySet()) {
+            NBTTagCompound handler = new NBTTagCompound();
+            handler.setTag("item", entry.getValue().serializeNBT());
+            handler.setInteger("index", entry.getKey());
+            list.appendTag(handler);
+        }
+        sub.setTag("pages", list);
+        sub.setBoolean("soulbound", soulbound);
+        sub.setBoolean("magnetic", magnetic);
     }
 
     public Map<Integer, ItemStackHandler> getInventory(ItemStack stack) {
@@ -111,9 +148,9 @@ public class InfiniteArcaneBag  extends Item implements PagedBag {
         return inv;
     }
 
-    public ItemStack makeStack() {
+    public ItemStack makeStack(boolean soulbound, boolean magnetic) {
         ItemStack stack = new ItemStack(this);
-        this.applyData(stack, new HashMap<>());
+        this.applyData(stack, new HashMap<>(), soulbound, magnetic);
         return stack;
     }
 

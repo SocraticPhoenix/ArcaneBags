@@ -19,64 +19,56 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.bagcontainer;
+package com.gmail.socraticphoenix.forge.bags.container.bag;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class SearchPageItemHandler extends ItemStackHandler {
-    public NonNullList<ItemStackHandler> handlers;
+public class SearchItemHandler extends ItemStackHandler {
+    private int page;
+    private int slot;
+    private PageWrapper wrapper;
+    private ItemStackHandler delegate;
 
-    public SearchPageItemHandler(NonNullList<ItemStackHandler> handlers) {
-        this.handlers = handlers;
+    public SearchItemHandler(int page, int slot, PageWrapper wrapper) {
+        super(1);
+        this.page = page;
+        this.slot = slot;
+        this.wrapper = wrapper;
+        this.delegate = wrapper.getPage(this.page);
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         this.validateSlot(slot);
-        if(slot < this.handlers.size()) {
-            this.handlers.get(slot).setStackInSlot(0, stack);
-        }
+        this.delegate.setStackInSlot(this.slot, stack);
     }
 
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
         this.validateSlot(slot);
-        if(slot < this.handlers.size()) {
-            return this.handlers.get(slot).getStackInSlot(0);
-        } else {
-            return ItemStack.EMPTY;
-        }
+        return this.delegate.getStackInSlot(this.slot);
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         this.validateSlot(slot);
-        if(slot < this.handlers.size()) {
-            return this.handlers.get(slot).insertItem(0, stack, simulate);
-        } else {
-            return stack;
-        }
+        return this.delegate.insertItem(this.slot, stack, simulate);
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         this.validateSlot(slot);
-        if(slot < this.handlers.size()) {
-            return this.handlers.get(slot).extractItem(0, amount, simulate);
-        } else {
-            return ItemStack.EMPTY;
-        }
+        return this.delegate.extractItem(this.slot, amount, simulate);
     }
 
     private void validateSlot(int slot) {
-        if (slot < 0 || slot >= 54)
+        if (slot < 0 || slot >= 1)
             throw new RuntimeException("Slot " + slot + " not in valid range - [0," + stacks.size() + ")");
     }
 

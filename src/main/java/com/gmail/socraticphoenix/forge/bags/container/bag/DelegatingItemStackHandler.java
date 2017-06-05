@@ -19,57 +19,74 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.bagcontainer;
+package com.gmail.socraticphoenix.forge.bags.container.bag;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class SearchItemHandler extends ItemStackHandler {
-    private int page;
-    private int slot;
-    private PageWrapper wrapper;
-    private ItemStackHandler delegate;
+public class DelegatingItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+    private ItemStackHandler handler;
 
-    public SearchItemHandler(int page, int slot, PageWrapper wrapper) {
-        super(1);
-        this.page = page;
-        this.slot = slot;
-        this.wrapper = wrapper;
-        this.delegate = wrapper.getPage(this.page);
+    public ItemStackHandler getHandler() {
+        return this.handler;
+    }
+
+    public DelegatingItemStackHandler setHandler(ItemStackHandler handler) {
+        this.handler = handler;
+        return this;
+    }
+
+    public void setSize(int size) {
+        this.handler.setSize(size);
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        this.validateSlot(slot);
-        this.delegate.setStackInSlot(this.slot, stack);
+        this.handler.setStackInSlot(slot, stack);
     }
 
-    @Nonnull
     @Override
+    public int getSlots() {
+        return this.handler.getSlots();
+    }
+
+    @Override
+    @Nonnull
     public ItemStack getStackInSlot(int slot) {
-        this.validateSlot(slot);
-        return this.delegate.getStackInSlot(this.slot);
+        return this.handler.getStackInSlot(slot);
     }
 
-    @Nonnull
     @Override
+    @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        this.validateSlot(slot);
-        return this.delegate.insertItem(this.slot, stack, simulate);
+        return this.handler.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
     @Override
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        this.validateSlot(slot);
-        return this.delegate.extractItem(this.slot, amount, simulate);
+        return this.handler.extractItem(slot, amount, simulate);
     }
 
-    private void validateSlot(int slot) {
-        if (slot < 0 || slot >= 1)
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + stacks.size() + ")");
+    @Override
+    public int getSlotLimit(int slot) {
+        return this.handler.getSlotLimit(slot);
     }
 
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return this.handler.serializeNBT();
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        this.handler.deserializeNBT(nbt);
+    }
+    
 }

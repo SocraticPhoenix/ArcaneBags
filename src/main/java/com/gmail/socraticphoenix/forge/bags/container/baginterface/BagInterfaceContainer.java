@@ -19,9 +19,9 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.interfacecontainer;
+package com.gmail.socraticphoenix.forge.bags.container.baginterface;
 
-import com.gmail.socraticphoenix.forge.bags.PagedBag;
+import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import com.gmail.socraticphoenix.forge.bags.block.BagInterfaceTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

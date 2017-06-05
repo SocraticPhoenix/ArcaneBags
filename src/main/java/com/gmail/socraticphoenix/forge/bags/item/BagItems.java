@@ -19,9 +19,11 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags;
+package com.gmail.socraticphoenix.forge.bags.item;
 
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.GeneralItemHandler;
+import com.gmail.socraticphoenix.forge.bags.ModArcaneBags;
+import com.gmail.socraticphoenix.forge.bags.container.bag.GeneralItemHandler;
+import net.minecraft.item.Item;
 
 import java.util.function.Function;
 
@@ -29,9 +31,36 @@ public class BagItems {
     public static ArcaneBag arcaneBag;
     public static InfiniteArcaneBag infiniteBag;
 
+    public static Item magicalEssence;
+    public static Item compressedEssence;
+    public static Item goldPaper;
+    public static Item arcanePaper;
+    public static Item arcanePage;
+    public static Item infinityMatrix;
+    public static Item awakeningCrystal;
+    public static Item compressionMatrix;
+    public static Item arcaneMagnet;
+    public static Item soulBinder;
+
     public static void init() {
         arcaneBag = new ArcaneBag();
         infiniteBag = new InfiniteArcaneBag("infinitebag", () -> new GeneralItemHandler(54, Function.identity(), Function.identity(), k -> !(k.getItem() instanceof PagedBag)));
+
+        magicalEssence = make("magicalessence");
+        compressedEssence = make("compressedessence");
+        goldPaper = make("goldpaper");
+        arcanePaper = make("arcanepaper");
+        arcanePage = make("arcanepage");
+        infinityMatrix = make("infinitymatrix");
+        awakeningCrystal = make("awakeningcrystal");
+        arcaneMagnet = make("arcanemagnet");
+        soulBinder = make("soulbinder");
+
+        compressionMatrix = make("compressionmatrix").setMaxDamage(10);
+    }
+
+    private static Item make(String name) {
+        return new Item().setRegistryName(name).setUnlocalizedName(name).setCreativeTab(ModArcaneBags.TAB_BAGS);
     }
 
 }

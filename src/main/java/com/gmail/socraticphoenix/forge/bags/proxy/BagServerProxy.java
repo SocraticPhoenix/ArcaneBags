@@ -19,30 +19,27 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.net;
+package com.gmail.socraticphoenix.forge.bags.proxy;
 
-import com.gmail.socraticphoenix.forge.bags.container.bag.BagContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public class SearchStatePacketHandler implements IMessageHandler<SearchStatePacket, IMessage> {
+public class BagServerProxy implements BagProxy {
+    
+    @Override
+    public void onPreInit(FMLPreInitializationEvent ev) {
+
+    }
 
     @Override
-    public IMessage onMessage(SearchStatePacket message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        if (player.getServer() != null) {
-            player.getServer().addScheduledTask(() -> {
-                Container container = player.openContainer;
-                if (container instanceof BagContainer) {
-                    BagContainer bagContainer = (BagContainer) container;
-                    bagContainer.setSearching(message.isSearching());
-                }
-            });
-        }
-        return null;
+    public void onInit(FMLInitializationEvent ev) {
+
+    }
+
+    @Override
+    public void onPostInit(FMLPostInitializationEvent ev) {
+
     }
 
 }

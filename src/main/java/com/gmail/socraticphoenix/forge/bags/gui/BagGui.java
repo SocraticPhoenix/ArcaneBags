@@ -19,8 +19,9 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.bagcontainer;
+package com.gmail.socraticphoenix.forge.bags.gui;
 
+import com.gmail.socraticphoenix.forge.bags.container.bag.BagContainer;
 import com.gmail.socraticphoenix.forge.bags.net.BagNetworking;
 import com.gmail.socraticphoenix.forge.bags.net.SearchStatePacket;
 import com.gmail.socraticphoenix.forge.bags.net.SearchUpdatePacket;

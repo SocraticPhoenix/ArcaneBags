@@ -19,7 +19,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.bagcontainer;
+package com.gmail.socraticphoenix.forge.bags.container.bag;
 
 import com.gmail.socraticphoenix.forge.bags.net.SearchUpdatePacket;
 import net.minecraft.entity.player.EntityPlayer;

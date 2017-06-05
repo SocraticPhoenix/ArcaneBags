@@ -21,7 +21,7 @@
  */
 package com.gmail.socraticphoenix.forge.bags.block;
 
-import com.gmail.socraticphoenix.forge.bags.interfacecontainer.BagItemStackHandler;
+import com.gmail.socraticphoenix.forge.bags.container.baginterface.BagItemStackHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

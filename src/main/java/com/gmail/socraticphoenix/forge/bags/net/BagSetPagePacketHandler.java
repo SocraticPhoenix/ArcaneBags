@@ -21,7 +21,7 @@
  */
 package com.gmail.socraticphoenix.forge.bags.net;
 
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.BagContainer;
+import com.gmail.socraticphoenix.forge.bags.container.bag.BagContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

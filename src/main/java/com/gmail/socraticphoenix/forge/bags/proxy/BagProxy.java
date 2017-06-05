@@ -19,13 +19,18 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags;
+package com.gmail.socraticphoenix.forge.bags.proxy;
 
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.PageWrapper;
-import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public interface PagedBag {
+public interface BagProxy {
 
-    PageWrapper getPageWrapper(ItemStack stack);
+    void onPreInit(FMLPreInitializationEvent ev);
+
+    void onInit(FMLInitializationEvent ev);
+
+    void onPostInit(FMLPostInitializationEvent ev);
 
 }

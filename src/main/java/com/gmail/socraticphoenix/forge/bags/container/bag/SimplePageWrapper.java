@@ -19,9 +19,9 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.forge.bags.bagcontainer;
+package com.gmail.socraticphoenix.forge.bags.container.bag;
 
-import com.gmail.socraticphoenix.forge.bags.InfiniteArcaneBag;
+import com.gmail.socraticphoenix.forge.bags.item.ArcaneBag;
 import com.gmail.socraticphoenix.forge.bags.net.SearchUpdatePacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,39 +30,36 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 import java.util.function.Supplier;
 
-public class InfinitePageWrapper implements PageWrapper {
-    private Map<Integer, ItemStackHandler> pages;
+public class SimplePageWrapper implements PageWrapper {
+    private List<ItemStackHandler> pages;
+    private int maxPages;
     private Supplier<ItemStackHandler> newHandler;
-    private int max;
 
-    public InfinitePageWrapper(Map<Integer, ItemStackHandler> pages, Supplier<ItemStackHandler> newHandler) {
+    public SimplePageWrapper(List<ItemStackHandler> pages, int maxPages, Supplier<ItemStackHandler> newHandler) {
         this.pages = pages;
+        this.maxPages = maxPages;
         this.newHandler = newHandler;
-        this.max = 0;
     }
 
     @Override
     public boolean hasPage(int index) {
-        return index >= 0;
+        return index >= 0 && index < this.maxPages;
     }
 
     @Override
     public ItemStackHandler getPage(int index) {
-        if (!this.pages.containsKey(index)) {
-            this.pages.put(index, this.newHandler.get());
-        }
-        if (index > this.max) {
-            this.max = index;
+        while (index >= this.pages.size()) {
+            this.pages.add(this.newHandler.get());
         }
         return this.pages.get(index);
     }
 
     @Override
     public String getMaxPages() {
-        return "\u221E";
+        return String.valueOf(this.maxPages);
     }
 
     @Override
@@ -72,18 +69,18 @@ public class InfinitePageWrapper implements PageWrapper {
 
     @Override
     public int rightMost() {
-        return this.max;
+        return this.maxPages - 1;
     }
 
     @Override
     public void applyData(ItemStack stack) {
-        InfiniteArcaneBag bag = (InfiniteArcaneBag) stack.getItem();
+        ArcaneBag bag = (ArcaneBag) stack.getItem();
         bag.applyData(stack, this.pages);
     }
 
     @Override
     public Collection<ItemStackHandler> pages() {
-        return this.pages.values();
+        return this.pages;
     }
 
     @Override
@@ -98,19 +95,20 @@ public class InfinitePageWrapper implements PageWrapper {
 
         String[] term = search.toLowerCase().split(" ");
         search:
-        for (Map.Entry<Integer, ItemStackHandler> entry : this.pages.entrySet()) {
-            ItemStackHandler handler = entry.getValue();
+        for (int i = 0; i < this.rightMost(); i++) {
+            ItemStackHandler handler = this.getPage(i);
             for (int j = 0; j < handler.getSlots(); j++) {
                 ItemStack stack = handler.getStackInSlot(j);
-                if (!stack.isEmpty() && PageWrapper.matches(term, stack, player)) {
-                    packet.addElement(entry.getKey(), j);
-
+                if(!stack.isEmpty() && PageWrapper.matches(term, stack, player)) {
+                    packet.addElement(i, j);
                 }
             }
         }
 
         return packet;
     }
+
+
 
 
 }

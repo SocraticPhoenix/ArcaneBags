@@ -21,11 +21,12 @@
  */
 package com.gmail.socraticphoenix.forge.bags;
 
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.BagContainer;
-import com.gmail.socraticphoenix.forge.bags.bagcontainer.BagGui;
+import com.gmail.socraticphoenix.forge.bags.container.bag.BagContainer;
+import com.gmail.socraticphoenix.forge.bags.gui.BagGui;
 import com.gmail.socraticphoenix.forge.bags.block.BagInterfaceTileEntity;
-import com.gmail.socraticphoenix.forge.bags.interfacecontainer.BagInterfaceContainer;
-import com.gmail.socraticphoenix.forge.bags.interfacecontainer.BagInterfaceGui;
+import com.gmail.socraticphoenix.forge.bags.container.baginterface.BagInterfaceContainer;
+import com.gmail.socraticphoenix.forge.bags.gui.BagInterfaceGui;
+import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
