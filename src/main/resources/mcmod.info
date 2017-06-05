@@ -1,0 +1,16 @@
+[
+{
+  "modid": "arcanebags",
+  "name": "Arcane Bags",
+  "description": "Insane storage",
+  "version": "0.0",
+  "mcversion": "1.11.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Socratic_Phoenix"],
+  "credits": "Socratic_Phoenix, the author",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
