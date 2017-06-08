@@ -31,7 +31,6 @@ public class BagItems {
     public static ArcaneBag arcaneBag;
     public static InfiniteArcaneBag infiniteBag;
 
-    public static Item magicalEssence;
     public static Item compressedEssence;
     public static Item goldPaper;
     public static Item arcanePaper;
@@ -46,7 +45,6 @@ public class BagItems {
         arcaneBag = new ArcaneBag();
         infiniteBag = new InfiniteArcaneBag("infinitebag", () -> new GeneralItemHandler(54, Function.identity(), Function.identity(), k -> !(k.getItem() instanceof PagedBag)));
 
-        magicalEssence = make("magicalessence");
         compressedEssence = make("compressedessence");
         goldPaper = make("goldpaper");
         arcanePaper = make("arcanepaper");

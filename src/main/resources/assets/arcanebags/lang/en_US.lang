@@ -1,7 +1,7 @@
 itemGroup.arcanebags.bags=Arcane Bags
 item.arcanebag.name=Arcane Bag
 item.infinitebag.name=Infinite Bag
-item.magicalessence.name=Magical Essence
+
 item.compressedessence.name=Compressed Magical Essence
 item.goldpaper.name=Gold Leaf Paper
 item.arcanepaper.name=Arcane Paper
@@ -12,6 +12,7 @@ item.arcanemagnet.name=Arcane Magnet
 item.soulbinder.name=Soul Binder
 item.compressionmatrix.name=Arcane Compression Matrix
 tile.baginterface.name=Bag Interface
+tile.magicalessence.name=Magical Essence
 
 arcanebags.pages=Pages
 arcangebags.baginterface=Bag Interface

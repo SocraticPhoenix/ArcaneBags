@@ -21,14 +21,26 @@
  */
 package com.gmail.socraticphoenix.forge.bags.recipe;
 
+import com.gmail.socraticphoenix.forge.bags.block.BagBlocks;
 import com.gmail.socraticphoenix.forge.bags.item.BagItems;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-public class CompressionRecipe implements IRecipe {
+import java.util.Arrays;
+
+public class CompressionRecipe extends ShapelessRecipes {
+
+    public CompressionRecipe() {
+        super(new ItemStack(BagItems.compressedEssence), Arrays.asList(new ItemStack(BagItems.compressionMatrix), new ItemStack(BagBlocks.magicalEssence)));
+    }
+
+    private boolean isMagicEssence(ItemStack stack) {
+        return stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() == BagBlocks.magicalEssence;
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -37,18 +49,18 @@ public class CompressionRecipe implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem() == BagItems.compressionMatrix) {
-                if (!matrix.isEmpty() || stack.getItemDamage() <= 0) {
+                if (!matrix.isEmpty() || stack.getItemDamage() >= stack.getMaxDamage()) {
                     return false;
                 } else {
                     matrix = stack;
                 }
-            } else if (stack.getItem() == BagItems.magicalEssence) {
+            } else if (this.isMagicEssence(stack)) {
                 essence++;
             } else if (!stack.isEmpty()) {
                 return false;
             }
         }
-        return !matrix.isEmpty() && matrix.getItemDamage() >= essence;
+        return !matrix.isEmpty() && matrix.getMaxDamage() - matrix.getItemDamage() >= essence;
     }
 
     @Override
@@ -56,7 +68,7 @@ public class CompressionRecipe implements IRecipe {
         int essence = 0;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack.getItem() == BagItems.magicalEssence) {
+            if (this.isMagicEssence(stack)) {
                 essence++;
             }
         }
@@ -69,11 +81,6 @@ public class CompressionRecipe implements IRecipe {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         ItemStack matrix = ItemStack.EMPTY;
         int essence = 0;
@@ -83,13 +90,16 @@ public class CompressionRecipe implements IRecipe {
             if (stack.getItem() == BagItems.compressionMatrix) {
                 matrix = stack;
                 mI = i;
-            } else if (stack.getItem() == BagItems.magicalEssence) {
+            } else if (this.isMagicEssence(stack)) {
                 essence++;
             }
         }
 
         matrix = matrix.copy();
-        matrix.setItemDamage(matrix.getItemDamage() - essence);
+        matrix.setItemDamage(matrix.getItemDamage() + essence);
+        if(matrix.getItemDamage() >= matrix.getMaxDamage()) {
+            matrix = ItemStack.EMPTY;
+        }
 
         NonNullList<ItemStack> rem = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         rem.set(mI, matrix);

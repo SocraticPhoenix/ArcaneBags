@@ -69,6 +69,6 @@ public interface PagedBag {
     }
 
     default boolean hasColor(ItemStack stack) {
-        return this.hasData(stack) && stack.getSubCompound("arcanebags").hasKey("color");
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey("color");
     }
 }

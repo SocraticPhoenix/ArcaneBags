@@ -36,7 +36,7 @@ public class BagClientSideListener {
 
     @SideOnly(Side.CLIENT)
     private static void r(Item item, String loc) {
-        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation("arcanebags:" +loc, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation("arcanebags:" + loc, "inventory"));
     }
 
     @SideOnly(Side.CLIENT)
@@ -49,7 +49,6 @@ public class BagClientSideListener {
     public void onModelLoad(ModelRegistryEvent ev) {
         r(BagItems.arcaneBag, "arcanebag");
         r(BagItems.infiniteBag, "infinitebag");
-        r(BagItems.magicalEssence, "magicalessence");
         r(BagItems.compressedEssence, "compressedessence");
         r(BagItems.goldPaper, "goldpaper");
         r(BagItems.arcanePage, "arcanepage");
@@ -61,6 +60,7 @@ public class BagClientSideListener {
         r(BagItems.soulBinder, "soulbinder");
 
         r(BagBlocks.bagInterface, "baginterface");
+        r(BagBlocks.magicalEssence, "magicalessence");
     }
 
 }

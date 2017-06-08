@@ -21,6 +21,7 @@
  */
 package com.gmail.socraticphoenix.forge.bags.container.bag;
 
+import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import com.gmail.socraticphoenix.forge.bags.net.SearchUpdatePacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -48,6 +49,8 @@ public class BagContainer extends Container {
     private int searchingPage;
 
     private List<ItemStackHandler> searchingPages;
+
+    private SearchUpdatePacket mostRecentPacket;
 
     public BagContainer(ItemStack bag, PageWrapper wrapper, InventoryPlayer playerInventory) {
         this.bag = bag;
@@ -93,6 +96,7 @@ public class BagContainer extends Container {
     }
 
     public void updateSearch(SearchUpdatePacket packet) {
+        this.mostRecentPacket = packet;
         List<ItemStackHandler> pages = new ArrayList<>();
         NonNullList<ItemStackHandler> slots = NonNullList.create();
         for(SearchUpdatePacket.Element element : packet.getElements()) {

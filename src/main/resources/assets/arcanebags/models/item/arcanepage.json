@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "arcanebags:items/infinitebag_overlay"
+        "layer0": "arcanebags:items/arcanepage"
     }
 }

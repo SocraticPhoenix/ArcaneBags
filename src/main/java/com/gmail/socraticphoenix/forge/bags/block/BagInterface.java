@@ -38,7 +38,7 @@ public class BagInterface extends Block {
 
     public BagInterface() {
         super(Material.ROCK);
-        this.setRegistryName("baginterface").setUnlocalizedName("baginterface").setCreativeTab(ModArcaneBags.TAB_BAGS);
+        this.setRegistryName("baginterface").setUnlocalizedName("baginterface").setCreativeTab(ModArcaneBags.TAB_BAGS).setHardness(1.5f);
     }
 
     @Override

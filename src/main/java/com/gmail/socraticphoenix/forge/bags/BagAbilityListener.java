@@ -21,10 +21,12 @@
  */
 package com.gmail.socraticphoenix.forge.bags;
 
+import com.gmail.socraticphoenix.forge.bags.container.bag.BagContainer;
 import com.gmail.socraticphoenix.forge.bags.container.bag.PageWrapper;
 import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
@@ -41,6 +43,11 @@ public class BagAbilityListener {
     @SubscribeEvent
     public void onPickup(EntityItemPickupEvent ev) {
         EntityPlayer player = ev.getEntityPlayer();
+        Container open = player.openContainer;
+        if (open instanceof BagContainer) {
+            return;
+        }
+
         List<ItemStack> held = new ArrayList<>();
 
         for (int i = 0; i < 9; i++) {
@@ -56,6 +63,10 @@ public class BagAbilityListener {
                 PagedBag item = (PagedBag) stack.getItem();
                 if (item.hasData(stack) && item.isMagnetic(stack)) {
                     ItemStack toAdd = ev.getItem().getEntityItem();
+                    if(toAdd.getItem() instanceof PagedBag) {
+                        return;
+                    }
+
                     PageWrapper inv = item.getPageWrapper(stack);
 
                     pages:
@@ -74,6 +85,7 @@ public class BagAbilityListener {
                         }
                     }
                     inv.applyData(stack);
+
 
                     if (toAdd.isEmpty()) {
                         ev.setCanceled(true);
@@ -107,12 +119,12 @@ public class BagAbilityListener {
     public void onRespawn(PlayerEvent.Clone ev) {
         EntityPlayer old = ev.getOriginal();
         EntityPlayer cloned = ev.getEntityPlayer();
-        if(!old.world.getGameRules().getBoolean("keepInventory") && ev.isWasDeath()) {
+        if (!old.world.getGameRules().getBoolean("keepInventory") && ev.isWasDeath()) {
             for (int i = 0; i < old.inventory.getSizeInventory(); i++) {
                 ItemStack stack = old.inventory.getStackInSlot(i);
-                if(stack.getItem() instanceof PagedBag) {
+                if (stack.getItem() instanceof PagedBag) {
                     PagedBag bag = (PagedBag) stack.getItem();
-                    if(bag.hasData(stack) && bag.isSoulBound(stack)) {
+                    if (bag.hasData(stack) && bag.isSoulBound(stack)) {
                         cloned.inventory.setInventorySlotContents(i, stack.copy());
                     }
                 }

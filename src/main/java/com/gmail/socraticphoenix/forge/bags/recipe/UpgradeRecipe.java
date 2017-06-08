@@ -23,27 +23,35 @@ package com.gmail.socraticphoenix.forge.bags.recipe;
 
 import com.gmail.socraticphoenix.forge.bags.item.ArcaneBag;
 import com.gmail.socraticphoenix.forge.bags.item.BagItems;
+import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-public class UpgradeRecipe implements IRecipe {
+import java.util.Arrays;
+
+public class UpgradeRecipe extends ShapelessRecipes {
+
+    public UpgradeRecipe() {
+        super(ItemStack.EMPTY, Arrays.asList(new ItemStack(BagItems.arcaneBag), new ItemStack(BagItems.arcanePage), new ItemStack(BagItems.arcaneMagnet), new ItemStack(BagItems.soulBinder)));
+        BagItems.arcaneBag.applyDefaultData(this.recipeItems.get(0));
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        ArcaneBag item = null;
+        PagedBag item = null;
         ItemStack bag = ItemStack.EMPTY;
         int pageCount = 0;
         boolean magnet = false;
         boolean soulbound = false;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack.getItem() instanceof ArcaneBag) {
+            if (stack.getItem() instanceof PagedBag) {
                 if (bag.isEmpty()) {
                     bag = stack;
-                    item = (ArcaneBag) bag.getItem();
+                    item = (PagedBag) bag.getItem();
                 } else {
                     return false;
                 }
@@ -65,22 +73,22 @@ public class UpgradeRecipe implements IRecipe {
                 return false;
             }
         }
-        return pageCount > 0 && !bag.isEmpty() && item.hasData(bag);
+        return ((pageCount > 0 && item == BagItems.arcaneBag) || ((magnet || soulbound) && pageCount == 0)) && !bag.isEmpty() && item.hasData(bag);
     }
 
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ArcaneBag item = null;
+        PagedBag item = null;
         ItemStack bag = ItemStack.EMPTY;
         int pageCount = 0;
         boolean soulbound = false;
         boolean magnet = false;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack.getItem() instanceof ArcaneBag) {
+            if (stack.getItem() instanceof PagedBag) {
                 bag = stack;
-                item = (ArcaneBag) bag.getItem();
+                item = (PagedBag) bag.getItem();
             } else if (stack.getItem() == BagItems.arcanePage) {
                 pageCount++;
             } else if (stack.getItem() == BagItems.arcaneMagnet) {
@@ -91,13 +99,16 @@ public class UpgradeRecipe implements IRecipe {
         }
 
         bag = bag.copy();
-        item.applyPages(bag, item.getPages(bag) + pageCount);
+        if(item instanceof ArcaneBag) {
+            BagItems.arcaneBag.applyPages(bag, BagItems.arcaneBag.getPages(bag) + pageCount);
+        }
+
         if(soulbound) {
-            item.applySoulbound(bag, true);
+            item.applySoulbound(bag, !item.isSoulBound(bag));
         }
 
         if(magnet) {
-            item.applyMagnetic(bag, true);
+            item.applyMagnetic(bag, !item.isMagnetic(bag));
         }
 
         return bag;
@@ -110,7 +121,12 @@ public class UpgradeRecipe implements IRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return ItemStack.EMPTY;
+        ItemStack out = new ItemStack(BagItems.arcaneBag);
+        BagItems.arcaneBag.applyDefaultData(out);
+        BagItems.arcaneBag.applyMagnetic(out, true);
+        BagItems.arcaneBag.applySoulbound(out, true);
+        BagItems.arcaneBag.applyPages(out, 2);
+        return out;
     }
 
     @Override

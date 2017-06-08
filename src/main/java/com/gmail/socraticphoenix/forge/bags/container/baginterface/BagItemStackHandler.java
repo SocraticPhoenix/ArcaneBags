@@ -115,7 +115,7 @@ public class BagItemStackHandler implements IItemHandler, IItemHandlerModifiable
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if(!(stack.getItem() instanceof PagedBag)) {
+        if(!(stack.getItem() instanceof PagedBag) || !((PagedBag) stack.getItem()).hasData(stack)) {
             return stack;
         }
 

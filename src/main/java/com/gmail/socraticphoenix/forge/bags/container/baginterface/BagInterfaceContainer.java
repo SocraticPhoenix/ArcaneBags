@@ -80,7 +80,7 @@ public class BagInterfaceContainer extends Container {
                     return ItemStack.EMPTY;
                 }
             } else {
-                if(!(current.getItem() instanceof PagedBag) || this.inventorySlots.get(0).getHasStack()) {
+                if(!(current.getItem() instanceof PagedBag) || !((PagedBag) current.getItem()).hasData(current) || this.inventorySlots.get(0).getHasStack()) {
                     return ItemStack.EMPTY;
                 }
 

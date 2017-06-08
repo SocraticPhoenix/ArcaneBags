@@ -21,11 +21,17 @@
  */
 package com.gmail.socraticphoenix.forge.bags.block;
 
+import com.gmail.socraticphoenix.forge.bags.ModArcaneBags;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+
 public class BagBlocks {
     public static BagInterface bagInterface;
+    public static Block magicalEssence;
 
     public static void init() {
         bagInterface = new BagInterface();
+        magicalEssence = new Block(Material.ROCK).setRegistryName("magicalessence").setUnlocalizedName("magicalessence").setCreativeTab(ModArcaneBags.TAB_BAGS).setHardness(1.5f);
     }
 
 }

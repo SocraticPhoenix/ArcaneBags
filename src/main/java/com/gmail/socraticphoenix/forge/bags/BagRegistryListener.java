@@ -36,6 +36,7 @@ public class BagRegistryListener {
     public void onBlockRegister(RegistryEvent.Register<Block> ev) {
         BagBlocks.init();
         r(ev, BagBlocks.bagInterface);
+        r(ev, BagBlocks.magicalEssence);
     }
 
     @SubscribeEvent
@@ -43,14 +44,14 @@ public class BagRegistryListener {
         BagItems.init();
         r(ev, BagItems.arcaneBag);
         r(ev, BagItems.infiniteBag);
-        r(ev, BagItems.magicalEssence);
+        r(ev, BagItems.compressionMatrix);
+        r(ev, BagItems.infinityMatrix);
+        r(ev, new ItemBlock(BagBlocks.magicalEssence).setRegistryName("magicalessence"));
         r(ev, BagItems.compressedEssence);
         r(ev, BagItems.goldPaper);
-        r(ev, BagItems.arcanePaper);
         r(ev, BagItems.arcanePage);
-        r(ev, BagItems.infinityMatrix);
+        r(ev, BagItems.arcanePaper);
         r(ev, BagItems.awakeningCrystal);
-        r(ev, BagItems.compressionMatrix);
         r(ev, BagItems.arcaneMagnet);
         r(ev, BagItems.soulBinder);
         r(ev, new ItemBlock(BagBlocks.bagInterface).setRegistryName("baginterface"));

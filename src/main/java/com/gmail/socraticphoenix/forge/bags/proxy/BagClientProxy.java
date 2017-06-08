@@ -52,7 +52,7 @@ public class BagClientProxy implements BagProxy {
             }
 
             PagedBag bag = (PagedBag) stack.getItem();
-            if(bag.hasData(stack) && bag.hasColor(stack)) {
+            if(bag.hasColor(stack)) {
                 return bag.getColor(stack);
             } else {
                 return w;

@@ -25,11 +25,17 @@ import com.gmail.socraticphoenix.forge.bags.item.BagItems;
 import com.gmail.socraticphoenix.forge.bags.item.PagedBag;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-public class AwakeningRecipe implements IRecipe {
+import java.util.Arrays;
+
+public class AwakeningRecipe extends ShapelessRecipes {
+
+    public AwakeningRecipe() {
+        super(ItemStack.EMPTY, Arrays.asList(new ItemStack(BagItems.arcaneBag), new ItemStack(BagItems.awakeningCrystal)));
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -62,13 +68,13 @@ public class AwakeningRecipe implements IRecipe {
         ItemStack bag = ItemStack.EMPTY;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if(stack.getItem() instanceof PagedBag) {
+            if (stack.getItem() instanceof PagedBag) {
                 bag = stack;
                 item = (PagedBag) bag.getItem();
                 break;
             }
         }
-        if(!bag.isEmpty()) {
+        if (!bag.isEmpty()) {
             ItemStack res = bag.copy();
             item.applyDefaultData(res);
             return res;
@@ -84,7 +90,9 @@ public class AwakeningRecipe implements IRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return ItemStack.EMPTY;
+        ItemStack bag = new ItemStack(BagItems.arcaneBag);
+        BagItems.arcaneBag.applyDefaultData(bag);
+        return bag;
     }
 
     @Override

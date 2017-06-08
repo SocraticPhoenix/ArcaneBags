@@ -28,10 +28,13 @@ import com.gmail.socraticphoenix.forge.bags.proxy.BagProxy;
 import com.gmail.socraticphoenix.forge.bags.recipe.AwakeningRecipe;
 import com.gmail.socraticphoenix.forge.bags.recipe.BagDyeRecipe;
 import com.gmail.socraticphoenix.forge.bags.recipe.CompressionRecipe;
+import com.gmail.socraticphoenix.forge.bags.recipe.InfiniteBagRecipe;
 import com.gmail.socraticphoenix.forge.bags.recipe.UpgradeRecipe;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,6 +47,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import java.awt.Color;
 
 @Mod(modid = "arcanebags", name = "Arcane Bags")
 public class ModArcaneBags {
@@ -79,21 +84,33 @@ public class ModArcaneBags {
         RecipeSorter.register("arcanebags:awakening", AwakeningRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
         RecipeSorter.register("arcanebags:upgrade", UpgradeRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
         RecipeSorter.register("arcanebags:compress", CompressionRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        RecipeSorter.register("arcanebags:infinite_bag", InfiniteBagRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
 
         CraftingManager manager = CraftingManager.getInstance();
         manager.addRecipe(new BagDyeRecipe());
         manager.addRecipe(new AwakeningRecipe());
         manager.addRecipe(new UpgradeRecipe());
         manager.addRecipe(new CompressionRecipe());
+        manager.addRecipe(new InfiniteBagRecipe());
 
-        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.magicalEssence), "DOD", "OEO", "DOD", 'D', "gemDiamond", 'O', "obsidian", 'E', Items.ENDER_EYE));
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            ItemStack wool = new ItemStack(Blocks.WOOL);
+            wool.setItemDamage(color.getMetadata());
+            ItemStack stack = new ItemStack(BagItems.arcaneBag);
+            if(color != EnumDyeColor.WHITE) {
+                float[] rgb = EntitySheep.getDyeRgb(color);
+                int n = new Color(rgb[0], rgb[1], rgb[2]).getRGB();
+                BagItems.arcaneBag.setColor(stack, n);
+            }
+            manager.addRecipe(new ShapedOreRecipe(stack, "WSW", "WAW", "WWW", 'W', wool, 'S', "string", 'A', BagItems.arcanePage));
+        }
+
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagBlocks.magicalEssence), "DOD", "OEO", "DOD", 'D', "gemDiamond", 'O', "obsidian", 'E', Items.ENDER_EYE));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.compressionMatrix), "DPD", "PBP", "DPD", 'D', "gemDiamond", 'P', Blocks.PISTON, 'B', Items.BUCKET));
-        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.goldPaper), "GPG", "GPG", "GPG", 'G', "ingotGold", 'P', "paper"));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.goldPaper), "GGG", "PPP", "GGG", 'G', "ingotGold", 'P', "paper"));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcanePaper), "EEE", "EGE", "EEE", 'E', BagItems.compressedEssence, 'G', BagItems.goldPaper));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcanePage), "PLP", "PDP", "PLP", 'P', BagItems.arcanePaper, 'L', "leather", 'D', "gemDiamond"));
-        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.infinityMatrix), "NNN", "NAN", "NNN", 'N', "netherStar", 'A', BagItems.arcanePage));
-        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcaneBag), "WSW", "WAW", "WWW", 'W', Blocks.WOOL, 'S', "string", 'A', BagItems.arcanePage));
-        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.infiniteBag), "EIE", "IBI", "EIE", 'E', BagItems.compressedEssence, 'I', BagItems.infinityMatrix, 'B', BagItems.arcaneBag));
+        manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.infinityMatrix), "DND", "NAN", "DND", 'D', "gemDiamond", 'N', "netherStar", 'A', BagItems.arcanePage));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.awakeningCrystal), "DLD", "LEL", "DLD", 'D', "gemDiamond", 'L', "gemLapis", 'E', BagItems.compressedEssence));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagBlocks.bagInterface), "CSC", "SES", "CSC", 'S', "cobblestone", 'C', BagItems.compressionMatrix, 'E', BagItems.compressedEssence));
         manager.addRecipe(new ShapedOreRecipe(new ItemStack(BagItems.arcaneMagnet), "IRI", "ECE", "IRI", 'I', "ingotIron", 'R', "dustRedstone", 'C', Items.COMPASS, 'E', BagItems.compressedEssence));
